@@ -18,6 +18,19 @@ When u do prerequisites next use in terminal this commend: gcloud init and loggi
 
 Next create simple app and docker file in your work file (e.g. look my files in repository)
 
-Next step is create file Terraform infrastructure called main.tf ( look files in repository ) and variables.tf to corect work. Before starting Terraform initialization, you need to fill the variables.tf file with your data.
+Next step is create file Terraform infrastructure called main.tf ( look files in repository ) and variables.tf to corect work. Before you start Terraform initialization, open main.tf find resource "null_resource" "docker_build_and_push" and set path to your dockerfile. Change the variable in terraform.tfvars to your own project_id, after that you will need to fill the variables.tf file with your data. At first, the "project_id" variable will be enough, and you will fill the other variables later, after you create the infrastructure.
+
+Now u can use commend: terraform init and terraform apply. After first apply u get some errors because cluster need time to get on and other resource cant create. Wait about 5min use this commend: gcloud container clusters get-credentials primary-cluster --region us-central1 --project my-task-123 (set your region and project_id) to confgure kubeconfig. Use one more time terraform apply now you can see only 1 error like this: 
+"Error: failed to create new session client
+│ 
+│   with argocd_application.hello_world_flask,
+│   on main.tf line 230, in resource "argocd_application" "hello_world_flask":
+│  230: resource "argocd_application" "hello_world_flask" {
+│ 
+│ dial tcp: lookup ipagro on 127.0.0.53:53: server misbehaving"
+
+These errors occur because the entire infrastructure is in the main.tf file, which is not created gradually, but all at once. The last Error is related to ArgoCD, it is that we now need to fill in the rest of the variables in variables.tf. 
+ 
+
 
 
