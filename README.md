@@ -34,6 +34,7 @@ Use command: kubect get services -n argocd  and coppy external ip to variable "a
 
 Now u need create git repository with deployment and service your app ( look here https://github.com/dondanielos19/task-gcp-agroCD/tree/master/hello-world-flask/manifests ) and set in deployment your image. Use this command to find image paht: gcloud artifacts docker images list us-central1-docker.pkg.dev/my-task-123/repo --project=my-task-123 and add tag v1 (e.g. us-central1-docker.pkg.dev/my-task-123/repo/hello-world-flask:v1 ). Go to main.tf find resource "argocd_application" "hello_world_flask" and fill url git repository and path. Use terraform apply, now you shouldn't have any errors. ArgoCD now deploy deployment and service. You can also loggin to UI AgroCD using external ip and username: admin and your password.
 
+Dopisać o ustawieniu zmiennej domeny na swoja!!!   Now it's time to set ur DNS in site your domain operator. Use this command: gcloud dns record-sets list --zone=sikalafa-zone --name=sikalafa.pl --type=NS  (name is your domain name), outputs are google NS records. In panel your domain operator you must change operator rekords to your google NS records. Now u can managed records from using google Cloud DNS and your ssl/tls certificates should start working but don't forget about waiting for finish propagation (use this side to check propagation status https://www.whatsmydns.net/ ). 
 
 
 
