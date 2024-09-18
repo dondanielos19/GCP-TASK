@@ -22,13 +22,20 @@ Next step is create file Terraform infrastructure called main.tf ( look files in
 
 Now u can use command: terraform init and terraform apply. 
 
-These errors occur because the entire infrastructure is in the main.tf file, which is not created gradually, but all at once. The last Error is related to ArgoCD, it is that we now need to fill in the rest of the variables in variables.tf.
-Use command: kubect get services -n argocd  and coppy external ip to variable "argocd_server_addr" next fill variable "argocd_password" taking password from this command: kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath='{.data.password}' | base64 -d   
+Now u need create git repository with deployment and service your app ( look here https://github.com/dondanielos19/task-gcp-agroCD/tree/master/hello-world-flask/manifests ) and set in deployment your image. Use this command to find image paht: gcloud artifacts docker images list us-central1-docker.pkg.dev/my-task-1234/repo --project=my-task-1234 and add tag v1 (e.g. us-central1-docker.pkg.dev/my-task-1234/repo/hello-world-flask:v1 ). Go to variables.tf find resource and fill url git repository and path. Use terraform apply, now you shouldn't have any errors. 
 
-Now u need create git repository with deployment and service your app ( look here https://github.com/dondanielos19/task-gcp-agroCD/tree/master/hello-world-flask/manifests ) and set in deployment your image. Use this command to find image paht: gcloud artifacts docker images list us-central1-docker.pkg.dev/my-task-123/repo --project=my-task-123 and add tag v1 (e.g. us-central1-docker.pkg.dev/my-task-123/repo/hello-world-flask:v1 ). Go to main.tf find resource "argocd_application" "hello_world_flask" and fill url git repository and path. Use terraform apply, now you shouldn't have any errors. ArgoCD now deploy deployment and service. You can also loggin to UI AgroCD using external ip and username: admin and your password.
+Now it's time to set ur DNS in site your domain operator. Use this command: gcloud dns record-sets list --zone=sikalafa-zone --name=sikalafa.pl --type=NS  (name is your domain name), outputs are google NS records. In panel your domain operator you must change operator rekords to your google NS records. Now u can managed records from using google Cloud DNS and your ssl/tls certificates should start working but don't forget about waiting for finish propagation (use this side to check propagation status https://www.whatsmydns.net/ ). 
 
-Dopisać o ustawieniu zmiennej domeny na swoja!!!   Now it's time to set ur DNS in site your domain operator. Use this command: gcloud dns record-sets list --zone=sikalafa-zone --name=sikalafa.pl --type=NS  (name is your domain name), outputs are google NS records. In panel your domain operator you must change operator rekords to your google NS records. Now u can managed records from using google Cloud DNS and your ssl/tls certificates should start working but don't forget about waiting for finish propagation (use this side to check propagation status https://www.whatsmydns.net/ ). 
+If you set DNS and propagation is finish, app should available from https because ingress and certificates configuration is in main.tf.
 
+Now you can configure prometheus to collect metrics from the application service. Get your ip from hello-world-flask services using this command: kubectl get services
 
+Add your IP in this config:
+scrape_configs:
+- job_name: 'FlaskAPP'
+static_configs:
+- targets: ['YOUR-IP']
+
+and add this config job to configmap: kubectl edit configmap prometheus-server -n monitoring 
 
 
