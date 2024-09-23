@@ -122,7 +122,7 @@ resource "google_artifact_registry_repository" "docker_repo" {
 resource "null_resource" "docker_build_and_push" {
   provisioner "local-exec" {
     command = <<EOT
-      docker build -f /home/dondnaielos/chwilaprawdy/Dockerfile -t ${var.region}-docker.pkg.dev/${var.project_id}/repo/hello-world-flask:v1 /home/dondnaielos/chwilaprawdy
+      docker build -f ../Dockerfile -t ${var.region}-docker.pkg.dev/${var.project_id}/repo/hello-world-flask:v1 ../gcp
       docker push ${var.region}-docker.pkg.dev/${var.project_id}/repo/hello-world-flask:v1
     EOT
   }
