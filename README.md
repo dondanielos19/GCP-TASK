@@ -21,7 +21,7 @@ When u do prerequisites, use in terminal this commands:
 gcloud init  #initialization gcloud
 ```
 ```
-gcloud auth login``` #login to gcp
+gcloud auth login  #login to gcp
 ```
 ```
 gcloud projects create my-task-1234 --name="task" #creating new project ( my-task-1234 and "task" these are my variables !!!)
